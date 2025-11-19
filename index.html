@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft Word Tables Quiz</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100%;
+      height: 100%;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    .quiz-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: 100%;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      border-radius: 12px;
+    }
+
+    .header h1 {
+      margin: 0 0 10px 0;
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .question-card {
+      padding: 30px;
+      margin-bottom: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .question-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .question-number {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      opacity: 0.7;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option {
+      padding: 16px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 16px;
+    }
+
+    .option:hover {
+      border-color: #4A90E2;
+      background-color: rgba(74, 144, 226, 0.05);
+    }
+
+    .option.selected {
+      border-color: #4A90E2;
+      background-color: rgba(74, 144, 226, 0.1);
+    }
+
+    .option.correct {
+      border-color: #4CAF50;
+      background-color: rgba(76, 175, 80, 0.1);
+    }
+
+    .option.incorrect {
+      border-color: #f44336;
+      background-color: rgba(244, 67, 54, 0.1);
+    }
+
+    .option.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .feedback {
+      margin-top: 15px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: #2E7D32;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .feedback.incorrect {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: #C62828;
+      border-left: 4px solid #f44336;
+    }
+
+    .score-section {
+      text-align: center;
+      padding: 40px;
+      border-radius: 12px;
+      margin-top: 30px;
+    }
+
+    .score-display {
+      font-size: 48px;
+      font-weight: 700;
+      margin: 20px 0;
+    }
+
+    .score-message {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    .submit-btn, .restart-btn {
+      padding: 16px 48px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 30px;
+    }
+
+    .submit-btn {
+      width: 100%;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .restart-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    @media (max-width: 600px) {
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .question-text {
+        font-size: 18px;
+      }
+
+      .score-display {
+        font-size: 36px;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="quiz-container">
+   <div class="header" id="header">
+    <h1 id="quiz-title">Microsoft Word Tables Quiz</h1>
+    <p id="quiz-subtitle">Test your knowledge of tables in Microsoft Word</p>
+   </div>
+   <div class="progress-bar" id="progress-bar">
+    <div class="progress-fill" id="progress-fill"></div>
+   </div>
+   <div id="questions-container"></div><button class="submit-btn" id="submit-btn" disabled>Submit Quiz</button>
+   <div class="score-section" id="score-section" style="display: none;">
+    <div class="score-message" id="score-message"></div>
+    <div class="score-display" id="score-display"></div><button class="restart-btn" id="restart-btn">Try Again</button>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      quiz_title: "Microsoft Word Tables Quiz",
+      quiz_subtitle: "Test your knowledge of tables in Microsoft Word",
+      background_color: "#f5f7fa",
+      card_background: "#ffffff",
+      primary_color: "#4A90E2",
+      text_color: "#2c3e50",
+      accent_color: "#5C6BC0",
+      font_family: "Segoe UI",
+      font_size: 16
+    };
+
+    const quizData = [
+      {
+        question: "What is the keyboard shortcut to insert a table in Microsoft Word?",
+        options: ["Ctrl + T", "Alt + T", "Insert > Table", "Ctrl + Shift + T"],
+        correct: 2
+      },
+      {
+        question: "Which feature allows you to automatically adjust column widths to fit content?",
+        options: ["AutoFit", "AutoSize", "Adjust Width", "Smart Resize"],
+        correct: 0
+      },
+      {
+        question: "What is the maximum number of columns you can have in a Word table?",
+        options: ["32", "63", "128", "255"],
+        correct: 1
+      },
+      {
+        question: "How do you merge two or more cells in a table?",
+        options: ["Right-click > Merge Cells", "Alt + M", "Ctrl + M", "Double-click cells"],
+        correct: 0
+      },
+      {
+        question: "Which tab contains table design and formatting options?",
+        options: ["Home tab", "Insert tab", "Table Design tab", "Format tab"],
+        correct: 2
+      },
+      {
+        question: "What does the 'Repeat Header Rows' feature do?",
+        options: ["Duplicates the table", "Shows headers on each page", "Creates a copy of headers", "Formats headers"],
+        correct: 1
+      },
+      {
+        question: "How can you quickly convert text to a table?",
+        options: ["Insert > Convert to Table", "Right-click > Table", "Ctrl + T", "Cannot convert text"],
+        correct: 0
+      },
+      {
+        question: "What is the purpose of table styles in Word?",
+        options: ["Add colors only", "Apply consistent formatting", "Change font size", "Insert borders"],
+        correct: 1
+      },
+      {
+        question: "Which key allows you to move to the next cell in a table?",
+        options: ["Enter", "Tab", "Spacebar", "Arrow keys only"],
+        correct: 1
+      },
+      {
+        question: "What happens when you press Tab in the last cell of a table?",
+        options: ["Nothing happens", "Moves to next table", "Creates a new row", "Exits the table"],
+        correct: 2
+      }
+    ];
+
+    let answers = new Array(quizData.length).fill(null);
+    let quizSubmitted = false;
+
+    function updateProgress() {
+      const answered = answers.filter(a => a !== null).length;
+      const percentage = (answered / quizData.length) * 100;
+      const progressFill = document.getElementById('progress-fill');
+      progressFill.style.width = percentage + '%';
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questions-container');
+      container.innerHTML = '';
+
+      quizData.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        
+        card.innerHTML = `
+          <div class="question-number">Question ${index + 1} of ${quizData.length}</div>
+          <div class="question-text">${q.question}</div>
+          <div class="options" data-question="${index}">
+            ${q.options.map((option, optIndex) => `
+              <div class="option" data-option="${optIndex}">
+                ${option}
+              </div>
+            `).join('')}
+          </div>
+          <div class="feedback" id="feedback-${index}"></div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      attachOptionListeners();
+      updateSubmitButton();
+    }
+
+    function attachOptionListeners() {
+      document.querySelectorAll('.options').forEach(optionsDiv => {
+        const questionIndex = parseInt(optionsDiv.dataset.question);
+        
+        optionsDiv.querySelectorAll('.option').forEach(option => {
+          option.addEventListener('click', function() {
+            if (quizSubmitted) return;
+
+            const optionIndex = parseInt(this.dataset.option);
+            
+            optionsDiv.querySelectorAll('.option').forEach(opt => {
+              opt.classList.remove('selected');
+            });
+            
+            this.classList.add('selected');
+            answers[questionIndex] = optionIndex;
+            
+            updateProgress();
+            updateSubmitButton();
+          });
+        });
+      });
+    }
+
+    function updateSubmitButton() {
+      const submitBtn = document.getElementById('submit-btn');
+      const allAnswered = answers.every(a => a !== null);
+      submitBtn.disabled = !allAnswered || quizSubmitted;
+    }
+
+    function calculateScore() {
+      let correct = 0;
+      answers.forEach((answer, index) => {
+        if (answer === quizData[index].correct) {
+          correct++;
+        }
+      });
+      return correct;
+    }
+
+    function showResults() {
+      quizSubmitted = true;
+      const score = calculateScore();
+      const percentage = (score / quizData.length) * 100;
+
+      quizData.forEach((q, index) => {
+        const optionsDiv = document.querySelector(`[data-question="${index}"]`);
+        const options = optionsDiv.querySelectorAll('.option');
+        const feedback = document.getElementById(`feedback-${index}`);
+
+        options.forEach((option, optIndex) => {
+          option.classList.add('disabled');
+          
+          if (optIndex === q.correct) {
+            option.classList.add('correct');
+          }
+          
+          if (optIndex === answers[index] && answers[index] !== q.correct) {
+            option.classList.add('incorrect');
+          }
+        });
+
+        if (answers[index] === q.correct) {
+          feedback.textContent = '✓ Correct!';
+          feedback.classList.add('correct', 'show');
+        } else {
+          feedback.textContent = `✗ Incorrect. The correct answer is: ${q.options[q.correct]}`;
+          feedback.classList.add('incorrect', 'show');
+        }
+      });
+
+      document.getElementById('submit-btn').style.display = 'none';
+      
+      const scoreSection = document.getElementById('score-section');
+      const scoreDisplay = document.getElementById('score-display');
+      const scoreMessage = document.getElementById('score-message');
+
+      scoreDisplay.textContent = `${score} / ${quizData.length}`;
+      
+      if (percentage >= 90) {
+        scoreMessage.textContent = '🎉 Outstanding!';
+      } else if (percentage >= 70) {
+        scoreMessage.textContent = '👍 Great Job!';
+      } else if (percentage >= 50) {
+        scoreMessage.textContent = '✓ Good Effort!';
+      } else {
+        scoreMessage.textContent = '📚 Keep Practicing!';
+      }
+
+      scoreSection.style.display = 'block';
+      scoreSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function restartQuiz() {
+      answers = new Array(quizData.length).fill(null);
+      quizSubmitted = false;
+      
+      document.getElementById('score-section').style.display = 'none';
+      document.getElementById('submit-btn').style.display = 'block';
+      
+      renderQuestions();
+      updateProgress();
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('submit-btn').addEventListener('click', showResults);
+    document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+
+    async function onConfigChange(config) {
+      const baseFontSize = config.font_size || defaultConfig.font_size;
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Tahoma, Geneva, Verdana, sans-serif';
+      const fontStack = `${customFont}, ${baseFontStack}`;
+
+      document.body.style.fontFamily = fontStack;
+      document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+      document.body.style.color = config.text_color || defaultConfig.text_color;
+      document.body.style.fontSize = `${baseFontSize}px`;
+
+      const header = document.getElementById('header');
+      header.style.backgroundColor = config.primary_color || defaultConfig.primary_color;
+      header.style.color = '#ffffff';
+
+      const title = document.getElementById('quiz-title');
+      title.textContent = config.quiz_title || defaultConfig.quiz_title;
+      title.style.fontSize = `${baseFontSize * 2.25}px`;
+
+      const subtitle = document.getElementById('quiz-subtitle');
+      subtitle.textContent = config.quiz_subtitle || defaultConfig.quiz_subtitle;
+      subtitle.style.fontSize = `${baseFontSize * 1.125}px`;
+
+      const cards = document.querySelectorAll('.question-card');
+      cards.forEach(card => {
+        card.style.backgroundColor = config.card_background || defaultConfig.card_background;
+      });
+
+      const questionTexts = document.querySelectorAll('.question-text');
+      questionTexts.forEach(qt => {
+        qt.style.fontSize = `${baseFontSize * 1.25}px`;
+      });
+
+      const options = document.querySelectorAll('.option');
+      options.forEach(option => {
+        option.style.fontSize = `${baseFontSize}px`;
+        if (option.classList.contains('selected') && !quizSubmitted) {
+          option.style.borderColor = config.primary_color || defaultConfig.primary_color;
+        }
+      });
+
+      const progressBar = document.getElementById('progress-bar');
+      progressBar.style.backgroundColor = '#e0e0e0';
+
+      const progressFill = document.getElementById('progress-fill');
+      progressFill.style.backgroundColor = config.accent_color || defaultConfig.accent_color;
+
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.style.backgroundColor = config.primary_color || defaultConfig.primary_color;
+      submitBtn.style.color = '#ffffff';
+      submitBtn.style.fontSize = `${baseFontSize * 1.125}px`;
+
+      const restartBtn = document.getElementById('restart-btn');
+      restartBtn.style.backgroundColor = config.accent_color || defaultConfig.accent_color;
+      restartBtn.style.color = '#ffffff';
+      restartBtn.style.fontSize = `${baseFontSize * 1.125}px`;
+
+      const scoreSection = document.getElementById('score-section');
+      scoreSection.style.backgroundColor = config.card_background || defaultConfig.card_background;
+
+      const scoreDisplay = document.getElementById('score-display');
+      scoreDisplay.style.color = config.primary_color || defaultConfig.primary_color;
+      scoreDisplay.style.fontSize = `${baseFontSize * 3}px`;
+
+      const scoreMessage = document.getElementById('score-message');
+      scoreMessage.style.fontSize = `${baseFontSize * 1.5}px`;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.card_background || defaultConfig.card_background,
+              set: (value) => {
+                config.card_background = value;
+                window.elementSdk.setConfig({ card_background: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                config.accent_color = value;
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["quiz_title", config.quiz_title || defaultConfig.quiz_title],
+          ["quiz_subtitle", config.quiz_subtitle || defaultConfig.quiz_subtitle]
+        ])
+      });
+    }
+
+    renderQuestions();
+    updateProgress();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a0eac1f2685bddb',t:'MTc2MzU0NDQ1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
